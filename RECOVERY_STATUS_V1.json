@@ -1,0 +1,46 @@
+{
+  "date": "2026-11-25",
+  "decision": "TECHNICAL_BLOCKED",
+  "evaluator": {
+    "adopted_revision": null,
+    "historical_release_commit": "e5d0ed0bab96280b60b637ec7f15b5e4841b0cb2",
+    "audited_proposed_revision": "26d6d00bb1fd0fa37f39c99d5290da67891d1c5e",
+    "fix_commit": "6eb1e199c2e370518e7bf3e8eee6322c2b23c89c",
+    "proposed_version_pending_approval": "evalplus-0.3.1+research.findzero.1",
+    "proposed_checker_sha256": "3c833c39b842e33f251c83db4347e0a95191909f23b390c12d73ab29a28a4daf"
+  },
+  "stages": {
+    "preserve_p0": "PASS",
+    "broad_evaluator_adoption": "BLOCKED",
+    "synthetic_checker_regression": "PASS",
+    "separated_execution_scoring": "NOT_RUN",
+    "separated_scorer_parity": "NOT_RUN",
+    "p1": "NOT_RUN",
+    "e1_e4": "NOT_RUN",
+    "confirmation": "NOT_RUN"
+  },
+  "synthetic_regression": {
+    "sources": 3,
+    "fixtures_per_source": 17,
+    "expectations_matched": 51,
+    "initial_failed_environment_probes": 1,
+    "completed_fixture_containers": 3,
+    "fixture_check_invocations": 51,
+    "wall_seconds": 4.73,
+    "host_launcher_peak_rss_bytes": 30752768
+  },
+  "recovery_access": {
+    "model_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "benchmark_case_executions": 0,
+    "model_generated_code_executions": 0,
+    "benchmark_reference_executions": 0,
+    "confirmation_records_read": 0,
+    "confirmation_outcomes_read": 0
+  },
+  "e1_budget": {
+    "measured_throughput_estimate_available": false,
+    "authorized": false
+  }
+}

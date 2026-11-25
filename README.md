@@ -1,25 +1,28 @@
-# Coding-model inference and verification — research program handoff
+# Coding inference and verification research
 
-Version 0.1 | 2026-11-25 | Researcher decision required at each phase boundary
+This ongoing research program studies when additional inference helps short Python code generation and repair, and where the gains are lost. It uses local Apple Silicon, automated executable benchmarks and explicit boundaries between generation and evaluation. The work is exploratory and has not undergone peer review.
 
-**Purpose:** understand why extra inference fails to improve Python code generation, and develop a valuable AI R&D contribution from evidence. This is an exploratory research program, not a preregistered confirmatory paper or a novelty claim.
+**Current status:** P0 evaluator recovery is awaiting a version decision. Synthetic checker diagnostics are separate from benchmark evidence. The eight-task P1 smoke is gated on evaluator validity, separated scoring, containment and parity. The six hypotheses remain untested. [Latest review](reports/RECOVERY_REVIEW_V1.md)
 
-## Start here
-1. Create a new local repository (suggested name `coding-inference-verification-research`). Keep previous pilots unchanged.
-2. Extract this directory into it, preserving paths. Read `AGENTS.md` and all `docs/`.
-3. Give Codex `prompts/CODEX_START.md`. Only P0/P1 are initially authorized; subsequent commands require researcher approval.
-4. Review `reports/P0_PREFLIGHT.md`, `reports/P1_SMOKE.md`, status JSON, and evidence manifests before approving any exploratory run.
+## Hypotheses
 
-## Files
-- `docs/01_charter.md`: scope, research questions, phase decisions.
-- `docs/02_literature.md`: reading/reproduction obligations and sources.
-- `docs/03_data_and_evaluation.md`: task splits, information boundaries, correctness rules.
-- `docs/04_security.md`: fail-closed execution contract.
-- `docs/05_experiments.md`: shared candidate pool, four controlled experiments and follow-ups.
-- `docs/06_analysis.md`: estimands, uncertainty, interpretation and decision rules.
-- `docs/07_execution_and_artifacts.md`: staged implementation, resources, reporting and acceptance checks.
-- `configs/exploration.yaml`: proposed numerical defaults and caps; review amendments before use.
-- `templates/hypothesis_register.md`, `templates/decision_record.md`, `templates/experiment_record.md`: working research records.
-- `prompts/CODEX_START.md`, `prompts/CODEX_EXPLORE_AFTER_APPROVAL.md`: gated handoffs.
+| ID | Question |
+| --- | --- |
+| H1 | Are gains limited by candidate generation, discriminative evidence, or the model's interpretation of evidence? |
+| H2 | Does feedback help because it carries distinct diagnostic information, because it carries more information, or because the model can act on it? |
+| H3 | How do invalid, weak, or correlated generator and verifier signals affect selection? |
+| H4 | When does initial code context help repair, and when does it anchor the model to a poor solution? |
+| H5 | How often does refinement regress initially correct programs, and when can visible-evidence retention avoid it? |
+| H6 | How do those bottlenecks vary with model capability, task difficulty and inference budget? |
 
-No experiments have been run by the author of this package. Versions, model revisions, exact dataset sizes, compatibility, cost and licenses must be verified in P0. Keep all artifacts private/local by default. No push, paid APIs, or cloud computation is authorized.
+## Roadmap
+
+- P0 verifies provenance, licensing, split commitments, scoring semantics and resource limits. P1 validates the engineering pipeline on synthetic fixtures and a bounded eight-task smoke.
+- E1 measures shared-pool headroom and deterministic selection. E2 varies the evidence shown to a selector while holding candidates fixed. E3 crosses initial-code context with visible feedback and measures regression. E4 separates test discrimination from label validity. Each requires separate researcher approval.
+- Confirmation requires a separate registered design and protected tasks. Public benchmarks can still be familiar to pretrained models. [Charter](docs/01_charter.md) · [Experiment portfolio](docs/05_experiments.md) · [Analysis](docs/06_analysis.md)
+
+## Reproduce the evaluator diagnostic
+
+The fixture is synthetic and runs on an ARM64 Docker Desktop image pinned by digest. The reproduction guide specifies source archives, wheel hashes, build commands and restrictions. The image is dedicated to regression fixtures. The inference lock and proposed research configuration record provenance while the P1 entry gate is closed. [Regression reproduction](docs/08_evalplus_regression.md) · [Proposed configuration](configs/p0-proposed.yaml) · [Security contract](docs/04_security.md)
+
+Study protocols and decisions are in [docs](docs/), [reports](reports/) and the [literature matrix](reports/LITERATURE_MATRIX.md). Baseline P0 records reflect the original handoff scope. Later authorization allows publication of the audited project files. Protected split material, evaluator labels and raw run artifacts are local.
