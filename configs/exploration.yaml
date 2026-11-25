@@ -1,0 +1,56 @@
+version: '0.1-proposed'
+research_mode: exploratory
+authorized_stages: [P0, P1]
+confirmation_enabled: false
+network_in_runner: false
+external_inference: false
+model:
+  id: mlx-community/Qwen2.5-Coder-3B-Instruct-4bit
+  revision: null # resolve and pin in P0
+  backend: mlx-lm
+  temperature: 0.7
+  top_p: 0.95
+  max_new_tokens: 768
+  max_context_tokens: 8192 # validate on local hardware
+  seed_namespace: null # private research parameter
+  trust_remote_code: false
+data:
+  benchmarks: [humaneval, mbpp]
+  evalplus_release: null # resolve and pin in P0
+  split_namespace: null # private research parameter
+  smoke_per_benchmark: 4
+  dev_per_benchmark: 20
+  confirmation_per_benchmark: 40
+  diagnostic_max_inputs: 8
+  heldout_min_unique_inputs: 8
+exploration:
+  E1_candidates_per_task: 8
+  E2_pool_size: 4
+  E2_tasks_max: 24
+  E2_max_new_tokens: 128
+  E3_factorial_tasks_max: 24
+  E3_preservation_tasks_max: 16
+  E4_tasks_max: 24
+  E4_panel_size: 2
+  E4_max_new_tokens: 512
+  bootstrap_replicates: 2000
+  bootstrap_seed: 11252026
+caps:
+  initial_download_gib: 12
+  initial_new_files_gib: 20
+  minimum_free_disk_gib: 15
+  max_inference_concurrency: 1
+  max_runner_concurrency: 1
+  P1: {calls: 24, output_tokens: 18432, wall_minutes: 90}
+  E1: {calls: 320, output_tokens: 245760, wall_minutes: 480}
+  E2: {calls: 96, output_tokens: 12288, wall_minutes: 180}
+  E3: {calls: 112, output_tokens: 86016, wall_minutes: 300}
+  E4: {calls: 24, output_tokens: 12288, wall_minutes: 180}
+sandbox:
+  image_digest: null
+  memory_mib: 512
+  pids_limit: 32
+  cpus: 1
+  stdout_stderr_max_kib: 64
+  tmpfs_mib: 64
+  timeout_policy: official_with_hard_safety_cap_to_validate_in_P0

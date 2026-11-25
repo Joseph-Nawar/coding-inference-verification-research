@@ -1,0 +1,11 @@
+# Decision record
+- Date / author / stage / run IDs:
+- Decision: CONTINUE_BRANCH / REVISE_SETUP / PAUSE_BRANCH / EXPLORE_OTHER_HYPOTHESIS / REVIEW_PROGRAM / TECHNICAL_BLOCKED
+- Evidence and hashes:
+- What was observed (including unfavorable results):
+- What remains untested / competing explanations:
+- Literature implications and unresolved overlap:
+- Proposed next experiment, costs and information value:
+- Any outcome already seen before design change:
+- Impact on confirmation/held-out integrity:
+- Researcher approval and scope:

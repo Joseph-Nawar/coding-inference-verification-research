@@ -1,0 +1,92 @@
+version: '0.1-p0-review'
+state: technical_blocked
+runnable: false
+baseline_config: exploration.yaml
+authorized_stages: [P0, P1]
+p1_entry_gate: blocked_pending_researcher_review
+confirmation_enabled: false
+external_inference: false
+model:
+  id: mlx-community/Qwen2.5-Coder-3B-Instruct-4bit
+  revision: 3dd939c621c08e5753d5b89f35a2642cd83b98ca
+  model_safetensors_bytes: 1736293090
+  model_safetensors_sha256: d448aef7ea541ec604ec05f6aef13b80a0017c6cc7acb9261a005e0358995db9
+  weights_digest_status: registry_metadata_only
+  config_sha256: 814fefdcfda3055e4de85557bf7f33abfff411cb68667d1b77566c562a5f0697
+  tokenizer_config_sha256: 7e88129d9769a0b14b1587a7d5e829fe93ac0e1511636471fdfc0811951418e6
+  quantization_bits: 4
+  quantization_group_size: 64
+  observed_parent_license_revision: 488639f1ff808d1d3d0ba301aef8c11461451ec5
+  parent_conversion_revision: null
+  conversion_reported_mlx_lm: '0.19.3'
+  trust_remote_code: false
+  temperature: 0.7
+  top_p: 0.95
+  max_new_tokens: 768
+  max_context_tokens: 8192
+  seed_namespace: null # private research parameter
+inference_runtime:
+  python: '3.12.15'
+  platform: macOS-arm64
+  mlx_lm: '0.32.2'
+  inference_lock: p0-inference.lock
+  inference_lock_sha256: 0cce4c3b86cafcf7c3369f423f54af27dde21a0e2e8b167bcb7d49d62c7fee54
+  inference_lock_status: resolved_not_installed
+data:
+  split_namespace: null # private research parameter
+  split_commitment_sha256: null # retained in private evidence
+  smoke_per_benchmark: 4
+  dev_per_benchmark: 20
+  confirmation_per_benchmark: 40
+  diagnostic_max_inputs: 8
+  heldout_min_unique_inputs: 8
+  humaneval:
+    version: v0.1.10
+    records: 164
+    sha256: 272720b90ac375502c8ed23cd791c2a93dfb22a911641a494da74a426c09f101
+  mbpp:
+    version: v0.2.0
+    records: 378
+    sha256: af43697e8791c4c149bdfd6b489d8b5412507551ac20e28a439f650b8225db63
+evaluator:
+  evalplus_release: v0.3.1
+  source_revision: e5d0ed0bab96280b60b637ec7f15b5e4841b0cb2
+  source_archive_sha256: 9586c229e27fded15a67eb9c306a4b7b26aec920d16abadd9e6f4bb34ea83551
+  wheel_sha256: cd601debb67419113d10ac5c3317689d847f27de5d8cf3837975f3cab571b75d
+  frozen_source_status: blocked_find_zero
+  full_dependency_lock: null
+  full_dependency_lock_status: blocked_pending_reviewed_source_build
+  alternate_source_for_review: 26d6d00bb1fd0fa37f39c99d5290da67891d1c5e
+  run_alternate: false
+  minimum_test_seconds: 1
+  reference_time_factor: 4
+  default_suite_limit_seconds_before_grace: 60
+sandbox:
+  image: docker.io/library/python@sha256:3f9c7f75b916e8279e24136d7a57769aba9e193715be52570417698c52d6eed0
+  image_label: 3.12.13-slim-bookworm
+  platform: linux/arm64
+  image_status: verified_manifest_only
+  network: none
+  read_only: true
+  uid_gid: '65532:65532'
+  cap_drop: ALL
+  no_new_privileges: true
+  pids_limit: 32
+  memory_mib: 512
+  memory_swap_mib: 512
+  cpus: 1
+  stdout_stderr_max_kib: 64
+  tmpfs_mib: 64
+  hard_watchdog_seconds: null
+caps:
+  initial_download_gib: 12
+  initial_new_files_gib: 20
+  minimum_free_disk_gib: 15
+  max_inference_concurrency: 1
+  max_runner_concurrency: 1
+  P0_install_download_wall_minutes: 120
+  P1:
+    calls: 24
+    generation_samples_per_task_max: 2
+    output_tokens: 18432
+    wall_minutes: 90

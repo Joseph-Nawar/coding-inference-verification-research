@@ -1,0 +1,100 @@
+{
+  "date": "2026-11-25",
+  "decision": "TECHNICAL_BLOCKED",
+  "stages": {
+    "P0": "BLOCKED",
+    "P1": "NOT_RUN",
+    "E1": "NOT_RUN",
+    "E2": "NOT_RUN",
+    "E3": "NOT_RUN",
+    "E4": "NOT_RUN",
+    "confirmation": "NOT_RUN"
+  },
+  "checks": {
+    "arm64_host": "PASS",
+    "docker_vm_available": "PASS",
+    "project_disk_floor_at_snapshots": "PASS",
+    "arm64_base_manifest_hash": "PASS",
+    "runtime_image_build_and_verification": "NOT_RUN",
+    "evalplus_release_and_wheel_checker_match": "PASS",
+    "evalplus_find_zero_bookkeeping": "FAIL",
+    "stock_evalplus_candidate_label_isolation": "FAIL",
+    "full_evaluator_dependency_lock": "BLOCKED",
+    "inference_dependency_resolution": "PASS",
+    "model_metadata_and_revision_pin": "PASS",
+    "local_weight_hash_and_mlx_runtime": "NOT_RUN",
+    "local_research_license_review": "PASS",
+    "dataset_archive_integrity": "PASS",
+    "unique_ids_and_split_commitment": "PASS",
+    "active_schema_and_lexical_duplicates": "PASS",
+    "semantic_or_cross_split_overlap": "NOT_RUN",
+    "typed_panels_and_prompt_example_overlap": "NOT_RUN",
+    "sandbox_fixture_suite": "NOT_RUN",
+    "official_runtime_parity": "NOT_RUN",
+    "evidence_isolation_canaries": "NOT_RUN",
+    "live_and_cached_replays": "NOT_RUN",
+    "model_competence_and_throughput": "NOT_RUN"
+  },
+  "access": {
+    "mechanical_archive_jsonl_decodes": 542,
+    "confirmation_mechanical_archive_jsonl_decodes_for_ids": 80,
+    "reserve_mechanical_archive_jsonl_decodes_for_ids": 414,
+    "smoke_development_schema_and_prompt_audit_records": 48,
+    "confirmation_detailed_inspections": 0,
+    "confirmation_generation_or_scorer_accesses": 0,
+    "confirmation_results_inspected": 0,
+    "smoke_tasks_selected": 8,
+    "smoke_tasks_prompted": 0,
+    "smoke_tasks_scored": 0,
+    "reference_executions": 0,
+    "candidate_executions": 0,
+    "runner_invocations": 0,
+    "v_d_h_panel_evaluations": 0,
+    "benchmark_labels_sent_to_model": 0
+  },
+  "calls": {
+    "local_inference": 0,
+    "external_inference": 0,
+    "generation": 0,
+    "selection": 0,
+    "repair": 0,
+    "cached_replays": 0,
+    "live_replays": 0,
+    "input_tokens": 0,
+    "output_tokens": 0
+  },
+  "resources": {
+    "host_ram_bytes": 17179869184,
+    "docker_vm_ram_bytes": 12526370816,
+    "project_free_kib_initial": 103340324,
+    "project_free_kib_followup": 103312800,
+    "docker_host_volume_free_kib_followup": 180867420,
+    "swap_used_mib_at_reported_snapshots": 0,
+    "benchmark_and_evalplus_downloaded_artifact_bytes": 1927040,
+    "p0_private_directory_kib_at_last_size_check": 57788,
+    "model_weights_fetched_bytes": 0,
+    "container_image_layers_fetched_bytes": 0,
+    "total_http_transfer_bytes": null,
+    "p1_tokens_per_second": null,
+    "p1_cost_estimate": null
+  },
+  "artifacts": {
+    "evalplus_tag_and_wheel_checker_sha256": "76857b678cddca08dcaf54d7927b9a77826715cf657654ca5baf6c2b267f4c34",
+    "inference_lock_sha256": "0cce4c3b86cafcf7c3369f423f54af27dde21a0e2e8b167bcb7d49d62c7fee54",
+    "tracked_sha256_manifest": "reports/P0_SHA256SUMS"
+  },
+  "blockers": [
+    "Researcher must choose the versioned scoring contract after the v0.3.1 find_zero discrepancy.",
+    "Official runtime parity and a separate trusted label comparator must qualify the approved contract.",
+    "The full evaluator dependency lock needs a verified source-build path or an approved dependency approach.",
+    "The checkpoint card omits the parent conversion revision and the remote weight hash awaits local verification."
+  ],
+  "e1_budget": {
+    "measured_proposal_available": false,
+    "authorized": false,
+    "proposed_scientific_scope": "40 development tasks, eight stochastic candidates per task, balanced five-task chunks after valid P1 timing",
+    "historical_ceiling_calls": 320,
+    "historical_ceiling_output_tokens": 245760,
+    "historical_ceiling_wall_minutes": 480
+  }
+}
