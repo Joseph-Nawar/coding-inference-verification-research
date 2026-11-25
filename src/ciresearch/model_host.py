@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import subprocess
 import time
+import uuid
 
 from ciresearch.sandbox import ready
 from ciresearch.wire import MAX_FRAME, read_frame, write_frame
@@ -21,7 +22,10 @@ class OfflineModel:
         self.profile = f"(version 1)(allow default)(deny network*)(deny file-read* {locations})"
 
     def __enter__(self):
-        self.stderr = (self.evidence / "inference-stderr.log").open("xb")
+        stderr_path = self.evidence / "inference-stderr.log"
+        if stderr_path.exists():
+            stderr_path = self.evidence / f"inference-stderr-{uuid.uuid4().hex}.log"
+        self.stderr = stderr_path.open("xb")
         env = {
             "PATH": "/usr/bin:/bin", "HOME": str(self.model.resolve()),
             "PYTHONPATH": str(self.module_path), "HF_HUB_OFFLINE": "1",

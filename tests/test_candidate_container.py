@@ -5,6 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
+from ciresearch.evaluate import evaluate_panel
 from ciresearch.sandbox import Container, SandboxError, docker, run_panel
 
 IMAGE = os.environ.get("CIRESEARCH_CANDIDATE_IMAGE")
@@ -74,6 +75,24 @@ def solve(x):
                 with Container(IMAGE, folder / "blocked"):
                     self.fail("second panel was allowed")
         self.assertTrue((folder / "holder" / "cleanup").exists())
+
+    def test_labels_are_read_only_after_container_removal(self):
+        evidence = Path(EVIDENCE) / self._testMethodName
+
+        class LabelCanary:
+            def __len__(self):
+                return 2
+
+            def __getitem__(self, index):
+                if not (evidence / "cleanup").exists():
+                    raise AssertionError("protected label read during execution")
+                return [1, 2][index]
+
+        verdict = evaluate_panel(
+            IMAGE, evidence, "humaneval", "def solve(x): return x", "solve", 0,
+            [[1], [2]], LabelCanary(), [0.0, 0.0],
+        )
+        self.assertEqual(verdict["details"], [True, True])
 
     def test_containment_and_label_canaries(self):
         with tempfile.TemporaryDirectory() as parent:

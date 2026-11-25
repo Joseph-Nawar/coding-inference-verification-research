@@ -26,3 +26,7 @@ PYTHONPATH=src CIRESEARCH_RELEASE_CHECKER=path/to/release-checker.py \
 ```
 
 For `tests/parity_v2.py` also supply `CIRESEARCH_OFFICIAL_IMAGE` and a fresh `CIRESEARCH_PARITY_EVIDENCE` path. Protected smoke-fixture inputs, implementation scaffolds, raw output and the empirical authorization records stay local. The empirical entry point rejects runs without validated image IDs, model file digests and all technical gates. It accepts only the pinned eight-task smoke audit. The planned smoke uses two samples per task plus one live seed replay, with no selector or repair calls. D/H results use the original plus-panel observations at the first occurrence of each typed unique input, so their comparison retains the original panel order.
+
+The host defers expected-output comparison until after candidate-container removal. During execution the host checks frame shape and supported types, records the bounded responses, and advances on the registered schedule. This keeps verdicts and comparison-dependent delays out of the input stream. Per-case timeout controls are necessary execution metadata. The smoke fixtures used the one-second floor.
+
+The P1 launcher accepts `--stage P1`, `--dry-run`, or `--resume` against the same private authorization. An append-only ledger and atomic immutable response files record each call. Resume recovers durable outputs without resampling, and refuses to retry a started call without a durable result or a partially executed candidate panel. The 90-minute wall clock remains anchored to the original run start.

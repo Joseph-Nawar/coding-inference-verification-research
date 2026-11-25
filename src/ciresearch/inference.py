@@ -49,10 +49,16 @@ def main():
         mx.random.seed(request["seed"])
         token_ids = []
         text_parts = []
-        for response in stream_generate(model, tokenizer, tokens, max_tokens=768,
-                                        sampler=make_sampler(temp=0.7, top_p=0.95)):
-            token_ids.append(response.token)
-            text_parts.append(response.text)
+        try:
+            for response in stream_generate(model, tokenizer, tokens, max_tokens=768,
+                                            sampler=make_sampler(temp=0.7, top_p=0.95)):
+                token_ids.append(response.token)
+                text_parts.append(response.text)
+        except Exception as exc:
+            reply({"status": "infrastructure_error", "text": "".join(text_parts),
+                   "token_ids": token_ids, "input_tokens": len(tokens),
+                   "observed_partial_tokens": len(token_ids), "exception": type(exc).__name__})
+            return
         if len(token_ids) != response.generation_tokens:
             raise RuntimeError("generation token accounting disagreed")
         reply({
