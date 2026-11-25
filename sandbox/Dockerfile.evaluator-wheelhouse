@@ -1,0 +1,7 @@
+FROM docker.io/library/python@sha256:3f9c7f75b916e8279e24136d7a57769aba9e193715be52570417698c52d6eed0
+COPY *.whl *.zip *.tar.gz /inputs/
+RUN python -m pip install --no-index --no-deps /inputs/setuptools-80.9.0-py3-none-any.whl /inputs/wheel-0.45.1-py3-none-any.whl
+ENV SOURCE_DATE_EPOCH=1730000000 PYTHONHASHSEED=0
+RUN python -m pip wheel --no-index --no-deps --no-build-isolation --wheel-dir /out /inputs/*.zip /inputs/*.tar.gz
+FROM scratch
+COPY --from=0 /out /

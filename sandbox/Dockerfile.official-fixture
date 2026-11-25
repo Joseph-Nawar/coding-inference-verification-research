@@ -1,0 +1,13 @@
+FROM docker.io/library/python@sha256:3f9c7f75b916e8279e24136d7a57769aba9e193715be52570417698c52d6eed0
+
+COPY requirements.txt *.whl /wheels/
+RUN python -m pip install --no-index --no-deps --only-binary=:all: --require-hashes \
+    --find-links /wheels -r /wheels/requirements.txt
+WORKDIR /opt/fixture
+COPY evalplus /opt/fixture/evalplus
+COPY EVALPLUS-LICENSE /opt/fixture/EVALPLUS-LICENSE
+COPY ciresearch /opt/fixture/ciresearch
+RUN echo '3c833c39b842e33f251c83db4347e0a95191909f23b390c12d73ab29a28a4daf  /opt/fixture/evalplus/eval/__init__.py' | sha256sum -c -
+USER 65532:65532
+ENV OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONHASHSEED=0
+ENTRYPOINT ["python", "-s", "-B", "-m", "ciresearch.official_fixture"]

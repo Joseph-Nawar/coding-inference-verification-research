@@ -1,0 +1,7 @@
+FROM docker.io/library/python@sha256:3f9c7f75b916e8279e24136d7a57769aba9e193715be52570417698c52d6eed0
+
+WORKDIR /opt/worker
+COPY src/ciresearch/wire.py src/ciresearch/worker.py /opt/worker/ciresearch/
+USER 65532:65532
+ENV PYTHONHASHSEED=0
+ENTRYPOINT ["python", "-s", "-B", "-m", "ciresearch.worker"]

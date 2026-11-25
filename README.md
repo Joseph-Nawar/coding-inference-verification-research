@@ -2,7 +2,7 @@
 
 This ongoing research program studies when additional inference helps short Python code generation and repair, and where the gains are lost. It uses local Apple Silicon, automated executable benchmarks and explicit boundaries between generation and evaluation. The work is exploratory and has not undergone peer review.
 
-**Current status:** P0 evaluator recovery is awaiting a version decision. Synthetic checker diagnostics are separate from benchmark evidence. The eight-task P1 smoke is gated on evaluator validity, separated scoring, containment and parity. The six hypotheses remain untested. [Latest review](reports/RECOVERY_REVIEW_V1.md)
+**Current status:** The narrow EvalPlus amendment is approved and the separated scorer is in technical preflight. Synthetic checker diagnostics are separate from benchmark evidence. The eight-task P1 smoke is gated on evaluator validity, separated scoring, containment and parity. The six hypotheses remain untested. [Current evaluator protocol](docs/09_p0_recovery_v2.md)
 
 ## Hypotheses
 
@@ -23,6 +23,6 @@ This ongoing research program studies when additional inference helps short Pyth
 
 ## Reproduce the evaluator diagnostic
 
-The fixture is synthetic and runs on an ARM64 Docker Desktop image pinned by digest. The reproduction guide specifies source archives, wheel hashes, build commands and restrictions. The image is dedicated to regression fixtures. The inference lock and proposed research configuration record provenance while the P1 entry gate is closed. [Regression reproduction](docs/08_evalplus_regression.md) · [Proposed configuration](configs/p0-proposed.yaml) · [Security contract](docs/04_security.md)
+The fixture is synthetic and runs on an ARM64 Docker Desktop image pinned by digest. The reproduction guide specifies source archives, wheel hashes, build commands and restrictions. The image is dedicated to regression fixtures. The current protocol documents the production candidate container, scorer and technical entry gates. [Regression reproduction](docs/08_evalplus_regression.md) · [Proposed configuration](configs/p0-proposed.yaml) · [Security contract](docs/04_security.md)
 
 Study protocols and decisions are in [docs](docs/), [reports](reports/) and the [literature matrix](reports/LITERATURE_MATRIX.md). Baseline P0 records reflect the original handoff scope. Later authorization allows publication of the audited project files. Protected split material, evaluator labels and raw run artifacts are local.
