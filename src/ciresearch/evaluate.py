@@ -10,7 +10,7 @@ class EvaluationUnavailable(SandboxError):
 
 
 def evaluate_panel(image, evidence, dataset, code, entry, atol, cases, expected, reference_times,
-                   *, minimum=1.0, halt=lambda: False):
+                   *, minimum=1.0, halt=lambda: False, hard_seconds=None):
     if not len(cases) == len(expected) == len(reference_times):
         raise ValueError("incomplete reference panel")
     outcomes = []
@@ -21,7 +21,7 @@ def evaluate_panel(image, evidence, dataset, code, entry, atol, cases, expected,
         outcomes.append(status)
 
     result = run_panel(image, evidence, code, entry, cases,
-                       [max(minimum, 4 * t) for t in reference_times], record, halt=halt)
+                       [max(minimum, 4 * t) for t in reference_times], record, halt=halt, hard_seconds=hard_seconds)
     if result not in {"complete", "invalid_program", "exception"}:
         raise EvaluationUnavailable(f"candidate initialization: {result}")
 

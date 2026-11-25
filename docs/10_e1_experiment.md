@@ -1,0 +1,28 @@
+# E1 shared candidate bank
+
+25 November 2026. The researcher authorized this exploratory run subject to a development-only integrity audit. The exact ordered allowlist, audit findings by task, archive hashes, tokenizer and weight hashes, prompt hashes, 320 deterministic seeds, image digests and reference traces are committed locally in the private registration. All are frozen before the first candidate. The public protocol records the rules without the protected membership. The six hypotheses are still exploratory.
+
+## Population and qualifications
+
+The registered 20 HumanEval+ and 20 MBPP+ development tasks are all retained. The audit decoded only those records and ran the approved canonical references in a dedicated isolated checker. No development task invokes the registered special-oracle branches. Two MBPP task inputs use tuple restoration from the pinned loader. The approved evaluator is `evalplus-0.3.1+research.findzero.1`, checker SHA-256 `3c833c39b842e33f251c83db4347e0a95191909f23b390c12d73ab29a28a4daf`.
+
+- Thirty-nine tasks can use the unmodified full base+plus endpoint. One has a canonical return exceeding the validated typed transport and lacks full and H-only labels. All its original inputs remain registered. Its eligible V and D evidence can still be measured.
+- Two further tasks retain their official-compatible labels and are omitted only from the separately reported 37-task integrity endpoint. One naming convention in the prose differs from common usage while the example and official reference agree. A second canonical formatter disagrees with ordinary decimal normalization in five of six checked valid-format cases. The provenance and exact checks are in private evidence.
+- D is available on 39 tasks. H is available on 38. One task has too few unique plus cases for both panels. The large-output task retains D and loses H. These decisions precede model generation.
+- A Python syntax warning from trusted reference source initially appeared on the trusted fixture wire. The repeat used the same pinned source with Python syntax warnings filtered only in the isolated reference image. Failed traces remain retained. The candidate image and checker code are unchanged.
+
+## Execution and selection
+
+The model is the existing pinned local MLX Qwen2.5-Coder-3B-Instruct 4-bit checkpoint with the P1 chat template and system instruction. The only generation fields are the task prompt and stable seed. For each task and sample, the seed is the first 32 bits of SHA-256 over the private registered namespace, stage, task ID, sample number, and model revision. Each task gets eight attempts at temperature 0.7, top-p 0.95 and 768 output tokens. Candidate zero is stochastic. Failed, duplicate and capped samples are retained. Eight chunks alternate 3/2 and 2/3 HumanEval+/MBPP+ tasks, preserving the order within each benchmark.
+
+V uses the complete official base panel. D and H use separate fresh processes. Typed plus inputs are deduplicated against V and one another. D takes the first up to eight cases by typed-input SHA-256 while leaving eight unique cases for H. The selected cases are executed in their original order. The official plus panel retains all occurrences and original order. Canonical references are calculated for each respective fresh panel in advance. The official full label combines the official base and official plus verdicts. H-only remains a separate endpoint.
+
+After freezing each generated chunk, selectors receive only V pass counts and typed behavioral digests. Ties go to the lowest original sample index. Behavioral signatures encode ordered statuses and exact typed returns from completed V panels. Coverage excludes failed extraction and incomplete traces. Exact signatures can distinguish returns that the tolerant comparator accepts as equivalent. The D scorer and all outputs remain outside the selector. The host freezes decisions before evaluating withheld cases. Per-chunk completed labels are sealed to measure actual resource costs. Later generators and selectors have filesystem access denied to the entire run and to the source data. Scientific joins occur only after the global freeze or an explicit stopped-run checkpoint.
+
+## Caps and statistics
+
+The cap is 320 calls, 245,760 generated tokens and 60 minutes, with one inference stream, one evaluator worker and at least 15 GiB free storage. Capture kernel memory pressure, swap, disk and active worker state before each chunk. Stop on critical pressure, sustained swap growth of at least 256 MiB relative to the starting sample across consecutive chunk boundaries, a sandbox error or cap. Reforecast after chunk one using benchmark-specific measured task time inclusive of V, D, plus and H panels. Reference computation is measured separately because the audit cache is reused. The run never resamples an unsuccessful call.
+
+At k = 1, 2, 4 and 8, use a common task denominator where all requested prefix labels are present. Use the full eight-label pool for unbiased pass@k where complete. Report additional worst/best bounds for unavailable tasks and raw denominator counts. Report first-sample correctness, uniform expected selection, deterministic V and consensus policies, empirical prefix oracle and paired selection differences. Calculate 2,000 paired stratified task bootstrap draws with seed 11252026. Report verification failures using all Y=0 and Y=1 labeled candidates as their respective denominators, plus visible acceptance risk and fresh H disagreement. The exact signature baseline is the registered behavioral consensus experiment.
+
+This record authorizes E1 only. E2–E4 and confirmation remain gated.
