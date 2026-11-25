@@ -1,6 +1,7 @@
 import unittest
 from ciresearch.e1_data import unique_panels, chunk_indices
-from ciresearch.e1_metrics import choose, pass_at_k
+from ciresearch.e1_analysis import interval, verification_rates
+from ciresearch.e1_metrics import choose, metric_row, pass_at_k, verification
 
 
 class E1Tests(unittest.TestCase):
@@ -29,3 +30,28 @@ class E1Tests(unittest.TestCase):
     def test_pass_at_k_uses_full_bank(self):
         self.assertAlmostEqual(pass_at_k(8, 2, 4), 11/14)
         self.assertEqual(pass_at_k(8, 2, 8), 1.0)
+
+    def test_registered_false_acceptance_denominators(self):
+        from collections import Counter
+
+        rows = [
+            {"y": False, "v": True, "h": False},
+            {"y": False, "v": False, "h": True},
+            {"y": True, "v": True, "h": True},
+            {"y": None, "v": True, "h": None},
+        ]
+        totals = Counter(verification(rows))
+        self.assertEqual(totals["yv_missing"], 1)
+        self.assertEqual(verification_rates(totals), {
+            "false_accept": 0.5, "false_reject": 0,
+            "incorrect_given_visible_pass": 0.5, "heldout_fail_given_visible_pass": 0.5,
+        })
+
+    def test_missing_full_bank_leaves_prefix_estimand_available(self):
+        data = metric_row([False, True, None, None, None, None, None, None],
+                          {"pass_count": 1, "consensus": 0}, 2)
+        self.assertEqual(data["uniform"], 0.5)
+        self.assertEqual(data["headroom_consensus"], 1)
+        self.assertEqual(data["delta_pass_count"], 1)
+        self.assertNotIn("pass_at_k", data)
+        self.assertEqual(interval([0.0, None, 1.0])["valid_replicates"], 2)
