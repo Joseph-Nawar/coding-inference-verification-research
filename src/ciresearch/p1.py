@@ -189,7 +189,7 @@ def run(args):
                     values, timing, _ = reference_panel(
                         args.official_image, args.run / f"{cid}-{panel}-reference", dataset,
                         task["entry_point"], task["atol"], 1.0, cases,
-                        reference=task["prompt"] + task["canonical_solution"],
+                        reference=task["prompt"] + task["canonical_solution"], deadline=deadline,
                     )
                     references[key] = values, timing
                 comparison[panel] = evaluate_panel(
