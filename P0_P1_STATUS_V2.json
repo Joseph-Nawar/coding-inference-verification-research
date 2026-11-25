@@ -1,0 +1,85 @@
+{
+  "date": "2026-11-25",
+  "p0_recovery": "PASS",
+  "p1": "COMPLETE",
+  "e1_e4": "NOT_RUN",
+  "confirmation": "NOT_RUN",
+  "evaluator": {
+    "version": "evalplus-0.3.1+research.findzero.1",
+    "source_release": "e5d0ed0bab96280b60b637ec7f15b5e4841b0cb2",
+    "upstream_fix": "6eb1e199c2e370518e7bf3e8eee6322c2b23c89c",
+    "checker_sha256": "3c833c39b842e33f251c83db4347e0a95191909f23b390c12d73ab29a28a4daf",
+    "full_evaluator_lock_sha256": "2d6bee77d1bfdfcda6afedecc6836a0db39d001d3566d7dc2d9c854904609103",
+    "unresolved_upstream_issue": 334
+  },
+  "checks": {
+    "automated_passed": 20,
+    "synthetic_parity_panels_matched": 14,
+    "smoke_fixture_candidate_panels_matched": 32,
+    "smoke_fixture_case_verdicts_matched": 7010,
+    "checkpoint_files_verified": 11,
+    "candidate_container_label_canary": "PASS",
+    "offline_inference": "PASS"
+  },
+  "boundary": {
+    "production_and_reference_containers_cleaned": 46,
+    "external_inference_calls": 0,
+    "development_record_payloads_decoded": 0,
+    "confirmation_record_payloads_decoded": 0,
+    "confirmation_outcomes_accessed": 0,
+    "empirical_reference_checks_containing_candidates": 0
+  },
+  "p1_measured": {
+    "all_generation_seconds": 91.90372229100103,
+    "calls_completed": 17,
+    "calls_started": 17,
+    "candidates_scored": 16,
+    "case_execution_statuses": {
+      "exception": 948,
+      "ok": 5109
+    },
+    "completed_smoke": true,
+    "evaluator_seconds": 22.49425495699961,
+    "exact_input_tokens": 2013,
+    "exact_output_tokens": 5225,
+    "finish_reasons": {
+      "stop": 16
+    },
+    "live_replays": 1,
+    "median_candidate_evaluation_seconds": 1.5939040000002933,
+    "median_decode_tokens_per_second": 59.851393841901164,
+    "median_prefill_tokens_per_second": 962.6206978252661,
+    "model_process_peak_rss_bytes": 1773338624,
+    "ordinary_candidate_cases_executed": 6057,
+    "ordinary_candidate_panels_executed": 30,
+    "ordinary_candidates_full_pass": 14,
+    "ordinary_generation_seconds": 83.47357162500157,
+    "ordinary_input_tokens": 1782,
+    "ordinary_output_tokens": 4733,
+    "ordinary_samples": 16,
+    "ordinary_tasks_with_correct_candidate": 8,
+    "parse_statuses": {
+      "invalid_syntax": 1,
+      "ok": 15
+    },
+    "peak_mlx_bytes": 2140972312,
+    "reference_panels": 16,
+    "reproducibility": {
+      "cached_extraction_equal": true,
+      "live_text_equal": true,
+      "live_tokens_equal": true
+    },
+    "smoke_tasks_scored": 8,
+    "wall_seconds": 118.07098293304443
+  },
+  "e1_recommendation": {
+    "authorized": false,
+    "development_tasks": 40,
+    "samples_per_task": 8,
+    "max_calls": 320,
+    "max_output_tokens": 245760,
+    "estimated_serial_wall_minutes": 35.3,
+    "proposed_wall_limit_minutes": 60,
+    "balanced_tasks_per_chunk": 5
+  }
+}

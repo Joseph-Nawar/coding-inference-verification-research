@@ -2,7 +2,7 @@
 
 This ongoing research program studies when additional inference helps short Python code generation and repair, and where the gains are lost. It uses local Apple Silicon, automated executable benchmarks and explicit boundaries between generation and evaluation. The work is exploratory and has not undergone peer review.
 
-**Current status:** The narrow EvalPlus amendment is approved and the separated scorer is in technical preflight. Synthetic checker diagnostics are separate from benchmark evidence. The eight-task P1 smoke is gated on evaluator validity, separated scoring, containment and parity. The six hypotheses remain untested. [Current evaluator protocol](docs/09_p0_recovery_v2.md)
+**Current status:** P0 recovery passed and the eight-task P1 engineering smoke is complete. The six hypotheses remain untested. E1 awaits researcher authorization. [P1 review](reports/P1_SMOKE_V2.md) · [Evaluator and security evidence](reports/P0_RECOVERY_V2.md)
 
 ## Hypotheses
 
