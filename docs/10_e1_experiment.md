@@ -26,3 +26,14 @@ The cap is 320 calls, 245,760 generated tokens and 60 minutes, with one inferenc
 At k = 1, 2, 4 and 8, use a common task denominator where all requested prefix labels are present. Use the full eight-label pool for unbiased pass@k where complete. Report additional worst/best bounds for unavailable tasks and raw denominator counts. Report first-sample correctness, uniform expected selection, deterministic V and consensus policies, empirical prefix oracle and paired selection differences. Calculate 2,000 paired stratified task bootstrap draws with seed 11252026. Report verification failures using all Y=0 and Y=1 labeled candidates as their respective denominators, plus visible acceptance risk and fresh H disagreement. The exact signature baseline is the registered behavioral consensus experiment.
 
 This record authorizes E1 only. E2–E4 and confirmation remain gated.
+
+## Reproduce reviewed aggregates
+
+The private registration supplies the immutable model-file hashes, image identifiers, prompt commitments, sampling seeds and integrity qualifications. The paired audit file contains only approved development references, encoded as typed values and reference times for each fresh panel. The E1 CLI verifies the archive, parent split commitment, model files, registered prompts, audit file and panel sizes before opening a new run directory.
+
+Use the pinned scorer environment and an approved private invocation of `python -m ciresearch.e1` with the model, local inference interpreter, archive root, registration, audit artifact and explicit read-denied paths. The CLI refuses to overwrite an existing run. The analysis below accepts a terminal freeze or stopped-run ledger and includes only audited complete checkpoints in scientific estimates. No private raw artifacts are needed in the public repository.
+
+```sh
+PYTHONPATH=src python3 -m ciresearch.e1_boundary path/to/private/run
+PYTHONPATH=src python3 -m ciresearch.e1_analysis path/to/private/run
+```
