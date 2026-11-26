@@ -2,7 +2,9 @@
 
 This ongoing research program studies when additional inference helps short Python code generation and repair, and where the gains are lost. It uses local Apple Silicon, automated executable benchmarks and explicit boundaries between generation and evaluation. The work is exploratory and has not undergone peer review.
 
-**Current status:** E1 stopped at a registered resource gate after 20 of 40 development tasks. The partial exploratory results and limitations are available for review. [E1 review](reports/E1_REVIEW.md) · [Experiment record](docs/10_e1_experiment.md)
+**Current status:** E1's original 20-task exploratory report remains preserved. An authorized continuation completed two additional chunks, then stopped during chunk 6 after material, persistent swap growth. The registered 40-task E1 analysis is incomplete; no E2–E4 or confirmation work has run. See the [original E1 review](reports/E1_REVIEW.md), [continuation resource report](reports/E1_CONTINUATION_RESOURCE_RECOVERY.md), [resource-stop decision](docs/12_e1_continuation_stop.md), and [experiment record](docs/10_e1_experiment.md).
+
+The public continuation source requires five local environment-provided integrity pins for validating the private stopped-run evidence. The publication-only refactor and its chronology are documented in the resource-stop decision; raw candidates, private commitments, and protected evaluation artifacts remain local.
 
 ## Hypotheses
 

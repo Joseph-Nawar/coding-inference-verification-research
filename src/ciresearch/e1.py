@@ -1,6 +1,6 @@
 """Run only the authorized 40-task E1 candidate bank, with separate evidence streams."""
 import argparse
-from collections import defaultdict
+from collections import Counter, defaultdict
 import hashlib
 import json
 from pathlib import Path
@@ -15,6 +15,14 @@ from ciresearch.evaluate import EvaluationUnavailable, evaluate_panel
 from ciresearch.extract import extract
 from ciresearch.model_host import OfflineModel
 from ciresearch.p1 import MODEL_REVISION, append, evidence_json, sha, verify_model
+from ciresearch.e1_continuation import (
+    ContinuationError,
+    _hash_tree,
+    create_continuation_segment,
+    parent_validation_pins,
+    validate_parent,
+    write_segment_manifest,
+)
 
 CALL_CAP = 320
 TOKEN_CAP = 245760
@@ -146,24 +154,113 @@ def select_visible(args, rows, deadline):
     return json.loads(selected.stdout)
 
 
+def forecast_continuation_total(elapsed_seconds, task_costs, future_groups, tasks, future_model_load_seconds):
+    """Project total segment time from elapsed work plus unrun tasks and model starts."""
+    counts = Counter(tasks[index][0] for group in future_groups for index in group)
+    projected = float(elapsed_seconds)
+    for benchmark, count in counts.items():
+        samples = task_costs.get(benchmark, ())
+        if count and not samples:
+            raise StopRun(f"insufficient measured costs to forecast {benchmark} continuation tasks")
+        if samples:
+            projected += count * (sum(samples) / len(samples))
+    projected += len(future_groups) * max(0.0, float(future_model_load_seconds))
+    return projected
+
+
 def run(args):
+    continuation = getattr(args, "continue_from", None) is not None
+    if not continuation and getattr(args, "expected_parent_ledger_sha256", None):
+        raise StopRun("an expected parent hash requires --continue-from")
+    parent = None
+    if continuation:
+        if args.run.exists():
+            raise StopRun("continuation segment path already exists")
+        expected = getattr(args, "expected_parent_ledger_sha256", None)
+        try:
+            pins = parent_validation_pins()
+        except ContinuationError as error:
+            raise StopRun(f"continuation integrity pins unavailable: {error}") from error
+        if expected != pins["ledger_sha256"]:
+            raise StopRun("continuation requires the approved stopped-parent ledger hash")
+        try:
+            parent = validate_parent(
+                args.continue_from, expected,
+                expected_manifest_sha256=pins["manifest_sha256"],
+                expected_registration_sha256=pins["registration_sha256"],
+                expected_checker_sha256=pins["checker_sha256"],
+                expected_reference_build_sha256=pins["reference_build_sha256"],
+            )
+        except ContinuationError as error:
+            raise StopRun(f"continuation parent validation failed: {error}") from error
+        # Every process that can observe a generation prompt is denied the full parent tree.
+        args.protected_path = [*args.protected_path, parent.root]
     lock, tasks = load_context(args)
-    args.run.mkdir(mode=0o700)
+
+    if continuation:
+        baseline_path = args.run.parent
+        if not baseline_path.is_dir():
+            raise StopRun("continuation segment parent directory is unavailable")
+        baseline = environment(baseline_path)
+        diagnostic_log = baseline_path / "diagnostics" / "resource-observations-20261126.jsonl"
+        diagnostic_log.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+        append(diagnostic_log, {"event": "continuation_preflight", "segment": str(args.run),
+                                "parent_ledger_sha256": parent.ledger_sha256,
+                                "environment": baseline})
+        try:
+            registration = create_continuation_segment(
+                args.run, parent, baseline, args.protected_path,
+                chunk_ids=parent.remaining_chunks,
+                task_ids=tuple(task for group in list(chunk_indices())[4:] for task in group),
+                calls=parent.remaining_calls,
+                tokens=parent.remaining_output_tokens,
+                seconds=parent.remaining_seconds,
+            )
+        except ContinuationError as error:
+            raise StopRun(f"continuation registration failed: {error}") from error
+        call_cap = parent.remaining_calls
+        token_cap = parent.remaining_output_tokens
+        wall_cap = parent.remaining_seconds
+        chunk_specs = list(enumerate(chunk_indices()))[4:]
+        initial_calls = parent.completed_calls
+        initial_tokens = parent.output_tokens
+        initial_input_tokens = parent.input_tokens
+        initial_tasks = len(parent.completed_tasks)
+        initial_seconds = parent.elapsed_seconds
+    else:
+        args.run.mkdir(mode=0o700)
+        baseline = environment(args.run)
+        call_cap, token_cap, wall_cap = CALL_CAP, TOKEN_CAP, WALL_CAP
+        chunk_specs = list(enumerate(chunk_indices()))
+        initial_calls = initial_tokens = initial_input_tokens = initial_tasks = initial_seconds = 0
+
     start = time.monotonic()
-    deadline = start + WALL_CAP
+    deadline = start + wall_cap
     ledger = args.run / "ledger.jsonl"
     visible = args.run / "visible.jsonl"
     decisions = args.run / "decisions.jsonl"
     sealed = args.run / "sealed-labels.jsonl"
-    baseline = environment(args.run)
-    append(ledger, {"event": "start", "environment": baseline})
-    if baseline["pressure"] >= 4 or baseline["free_bytes"] < DISK_FLOOR or baseline["container_ids"] or baseline["active_models"]:
-        raise StopRun("initial runtime gate failed")
-    calls = tokens = completed = 0
+    if continuation:
+        registration_bytes = (args.run / "continuation-registration.json").read_bytes()
+        append(ledger, {"event": "continuation_start", "environment": baseline,
+                        "parent_ledger_sha256": parent.ledger_sha256,
+                        "registration_sha256": sha(registration_bytes),
+                        "starting_calls": initial_calls, "starting_tokens": initial_tokens,
+                        "starting_input_tokens": initial_input_tokens,
+                        "starting_tasks": initial_tasks, "starting_elapsed_seconds": initial_seconds})
+    else:
+        append(ledger, {"event": "start", "environment": baseline})
+    calls = tokens = input_tokens = completed = 0
     swap_high = False
     costs = defaultdict(list)
+    if (not continuation and (baseline["pressure"] >= 4 or baseline["free_bytes"] < DISK_FLOOR
+                              or baseline["container_ids"] or baseline["active_models"])):
+        raise StopRun("initial runtime gate failed")
     try:
-        for ordinal, group in enumerate(chunk_indices()):
+        if (continuation and (baseline["pressure"] >= 4 or baseline["free_bytes"] < DISK_FLOOR
+                or baseline["container_ids"] or baseline["active_models"])):
+            raise StopRun("initial runtime gate failed")
+        for ordinal, group in chunk_specs:
             snapshot = environment(args.run)
             append(ledger, {"event": "chunk_start", "chunk": ordinal, "environment": snapshot})
             high = snapshot["swap_mib"] - baseline["swap_mib"] >= 256
@@ -187,7 +284,7 @@ def run(args):
                     started = time.monotonic()
                     items = []
                     for sample, seed in enumerate(lock["seeds"][index]):
-                        if calls >= CALL_CAP or tokens + 768 > TOKEN_CAP or time.monotonic() >= deadline:
+                        if calls >= call_cap or tokens + 768 > token_cap or time.monotonic() >= deadline:
                             raise StopRun("authorized E1 generation cap reached")
                         cid = sha(f'{lock["run_id"]}|{index}|{sample}|{seed}'.encode())
                         append(ledger, {"event": "call_started", "task": index, "sample": sample, "id": cid})
@@ -197,6 +294,7 @@ def run(args):
                         if result.get("status") != "ok" or not 1 <= result["output_tokens"] <= 768:
                             raise StopRun("generation infrastructure failure")
                         tokens += result["output_tokens"]
+                        input_tokens += result["input_tokens"]
                         parsed, code, failure = classify({**result, "entry": task["entry_point"]})
                         append(ledger, {"event": "call_complete", "id": cid, "task": index, "sample": sample,
                                         "parse": parsed, "code_hash": sha(code.encode()),
@@ -242,26 +340,61 @@ def run(args):
                     append(sealed, {"task": index, "sample": sample, "id": cid, "y": y, "h": h,
                                     "qualified_y": y if integrity else None, "outcomes": outputs})
                 costs[dataset].append(runtime[index] + time.monotonic() - began)
+            if continuation:
+                append(ledger, {"event": "chunk_labels_joined", "chunk": ordinal})
             completed += len(group)
             checkpoint = environment(args.run)
-            forecast = sum(20 * (sum(costs[name])/len(costs[name])) for name in costs)
-            append(ledger, {"event": "chunk_checkpoint", "chunk": ordinal, "completed_tasks": completed,
-                            "environment": checkpoint, "wall": time.monotonic() - start,
-                            "forecast_seconds": forecast, "reference_audit_seconds": lock["reference_audit_seconds"]})
-            if ordinal == 0 and forecast >= WALL_CAP:
+            if continuation:
+                future_groups = [future_group for future_ordinal, future_group in chunk_specs
+                                 if future_ordinal > ordinal]
+                forecast = forecast_continuation_total(
+                    time.monotonic() - start, costs, future_groups, tasks,
+                    meta.get("load_seconds", 0.0))
+            else:
+                forecast = sum(20 * (sum(costs[name])/len(costs[name])) for name in costs)
+            checkpoint_record = {"event": "chunk_checkpoint", "chunk": ordinal,
+                                 "completed_tasks": initial_tasks + completed,
+                                 "environment": checkpoint, "wall": time.monotonic() - start,
+                                 "forecast_seconds": forecast,
+                                 "reference_audit_seconds": lock["reference_audit_seconds"]}
+            if continuation:
+                checkpoint_record["chunk_artifact_sha256"] = _hash_tree(chunk_dir)
+            append(ledger, checkpoint_record)
+            if ordinal == chunk_specs[0][0] and forecast >= wall_cap:
                 raise StopRun("measured first-chunk workload does not fit the authorized window")
-        append(ledger, {"event": "global_freeze", "calls": calls, "tokens": tokens, "tasks": completed,
-                        "elapsed_seconds": time.monotonic() - start})
+        elapsed = time.monotonic() - start
+        append(ledger, {"event": "global_freeze", "calls": initial_calls + calls,
+                        "tokens": initial_tokens + tokens,
+                        "input_tokens": initial_input_tokens + input_tokens,
+                        "tasks": initial_tasks + completed,
+                        "elapsed_seconds": initial_seconds + elapsed,
+                        "segment_calls": calls, "segment_tokens": tokens,
+                        "segment_input_tokens": input_tokens,
+                        "segment_tasks": completed, "segment_elapsed_seconds": elapsed})
     except BaseException as error:
-        append(ledger, {"event": "stopped", "calls": calls, "tokens": tokens, "tasks": completed,
-                        "elapsed_seconds": time.monotonic() - start, "reason": str(error)})
+        elapsed = time.monotonic() - start
+        append(ledger, {"event": "stopped", "calls": initial_calls + calls,
+                        "tokens": initial_tokens + tokens,
+                        "input_tokens": initial_input_tokens + input_tokens,
+                        "tasks": initial_tasks + completed,
+                        "elapsed_seconds": initial_seconds + elapsed,
+                        "segment_calls": calls, "segment_tokens": tokens,
+                        "segment_input_tokens": input_tokens,
+                        "segment_tasks": completed, "segment_elapsed_seconds": elapsed,
+                        "reason": str(error)})
+        if continuation:
+            write_segment_manifest(args.run)
         raise
+    if continuation:
+        write_segment_manifest(args.run)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for field in ("lock", "audit", "data", "model", "python", "run"):
         parser.add_argument("--" + field, required=True, type=Path)
+    parser.add_argument("--continue-from", type=Path)
+    parser.add_argument("--expected-parent-ledger-sha256")
     parser.add_argument("--protected-path", required=True, action="append", type=Path)
     run(parser.parse_args())
 
