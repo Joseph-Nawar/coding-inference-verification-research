@@ -1,0 +1,68 @@
+schema: ciresearch-e2-v1
+protocol: docs/15_E2_PROTOCOL_AMENDMENT_V1.md
+research_status: exploratory
+confirmation_enabled: false
+model:
+  id: mlx-community/Qwen2.5-Coder-3B-Instruct-4bit
+  checkpoint_source: exact_local_revision_in_E1_registration
+  tokenizer_source: exact_local_revision_in_E1_registration
+  backend: pinned_offline_mlx_runtime
+  trust_remote_code: false
+  temperature: 0.7
+  top_p: 0.95
+  max_new_tokens: 128
+  max_context_tokens: 8192
+  output_reserve_tokens: 128
+  max_input_tokens: 8064
+population:
+  source: six_validated_E1_checkpoints_only
+  candidates_per_task: 4
+  eligibility_source: technical_evidence_and_final_prompt_fit_only
+  read_correctness_for_eligibility: false
+  per_benchmark_sample: 12
+  balanced_batch_size: 4
+  batches: 6
+  no_outcome_based_exclusions: true
+  insufficient_balance_action: stop_before_inference
+ordering:
+  namespace: ciresearch-e2-sample-v1
+  task_order: sha256(namespace,task-order-v1,benchmark,task_id)
+  candidate_order: sha256(namespace,candidate-order-v1,task_id,candidate_id)
+  arm_schedule: balanced_cyclic_rotations_within_each_four-task_batch
+  call_seed: first_32_bits_sha256(namespace,generation-seed-v1,task_id,arm,model_revision)
+  response_index_base: 1
+  retries: 0
+conditions:
+  A: task_and_candidates
+  B: A_plus_visible_pass_count_case_count_and_all_pass
+  C: B_plus_cached_D_inputs_and_ordered_candidate_outputs_or_statuses
+  D: C_plus_D_expected_outputs_and_registered_comparator_results
+selection:
+  output_schema: '{"choice": 1..4}'
+  output_fields: [choice]
+  visible_pass_count: maximize_registered_V_case_passes
+  visible_consensus: maximize_identical_available_typed_V_signatures
+  d_only: maximize_comparator_valid_D_case_passes
+  v_plus_d: maximize_V_plus_D_case_passes
+  tie_break: lowest_original_E1_sample_index
+analysis:
+  bootstrap_replicates: 2000
+  bootstrap_seed: 11252026
+  unit: task
+  stratified_by_benchmark: true
+  exploratory_only: true
+caps:
+  tasks: 24
+  model_call_starts: 96
+  output_tokens: 12288
+  empirical_seconds: 1800
+  inference_streams: 1
+  minimum_free_disk_gib: 15
+  batch_tasks: 4
+resource_gate:
+  requires_fresh_boot_after_utc: '2026-11-26T11:45:06Z'
+  requires_closure_of_unnecessary_apps: true
+  requires_no_stale_research_or_evaluator_processes: true
+  stop_on_critical_pressure: true
+  stop_on_material_persistent_swap_growth: true
+  repeat_rebaseline_to_bypass_stop: false

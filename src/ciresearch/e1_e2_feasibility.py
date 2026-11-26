@@ -62,7 +62,9 @@ class E2EvidenceView:
     parent_root: Path
     continuation_root: Path
     original_tasks: tuple
+    continuation_tasks: tuple
     completed_tasks: tuple
+    checkpoint_chunks: tuple
     call_records: tuple
     visible_records: tuple
 
@@ -72,7 +74,9 @@ def e2_evidence_view(view: InterimView) -> E2EvidenceView:
         parent_root=view.parent_root,
         continuation_root=view.continuation_root,
         original_tasks=tuple(view.original_tasks),
+        continuation_tasks=tuple(view.continuation_tasks),
         completed_tasks=tuple(view.completed_tasks),
+        checkpoint_chunks=tuple(view.checkpoint_chunks),
         call_records=tuple(view.call_records),
         visible_records=tuple(view.visible_records),
     )

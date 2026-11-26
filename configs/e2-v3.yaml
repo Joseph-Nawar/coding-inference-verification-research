@@ -1,0 +1,87 @@
+schema: ciresearch-e2-v3
+private_registration_schema: ciresearch-e2-private-registration.v2
+protocol: docs/17_E2_PREOUTCOME_TECHNICAL_AMENDMENT_V3.md
+predecessors:
+  - docs/15_E2_PROTOCOL_AMENDMENT_V1.md
+  - docs/16_E2_PREOUTCOME_TECHNICAL_AMENDMENT_V2.md
+research_status: exploratory
+confirmation_enabled: false
+model:
+  id: mlx-community/Qwen2.5-Coder-3B-Instruct-4bit
+  revision: 3dd939c621c08e5753d5b89f35a2642cd83b98ca
+  backend: offline_mlx
+  runtime:
+    mlx: 0.32.5
+    mlx_metal: 0.32.5
+    mlx_lm: 0.32.2
+    transformers: 5.24.1
+    tokenizers: 0.23.3
+  dependency_lock: configs/p0-inference.lock
+  trust_remote_code: false
+  temperature: 0.7
+  top_p: 0.95
+  max_new_tokens: 128
+  max_context_tokens: 8192
+  output_reserve_tokens: 128
+  max_input_tokens: 8064
+population:
+  source: six_validated_completed_E1_checkpoints_only
+  completed_task_count: 30
+  candidates_per_task: 4
+  candidate_source: cached_E1_source_for_all_registered_parse_statuses
+  eligibility: cached_technical_evidence_and_final_prompt_fit
+  correctness_labels_read_for_eligibility: false
+  per_benchmark_sample: 12
+  balanced_batch_size: 4
+  batches: 6
+  no_outcome_based_exclusions: true
+  insufficient_balance_action: stop_before_inference
+ordering:
+  namespace: ciresearch-e2-sample-v1
+  task_order: sha256(namespace,task-order-v1,benchmark,task_id)
+  batch_task_order: sha256(namespace,batch-task-v1,batch,task_id)
+  candidate_order: sha256(namespace,candidate-order-v1,task_id,candidate_id)
+  arm_schedule: balanced_cyclic_rotations_within_each_four-task_batch
+  call_seed: first_32_bits_sha256(namespace,generation-seed-v1,task_id,arm,model_revision)
+  call_id: sha256(namespace,call-v1,task_id,arm,seed,prompt_sha256)
+  response_index_base: 1
+  retries: 0
+conditions:
+  A: task_specification_and_four_candidate_sources_with_parse_statuses
+  B: A_plus_visible_pass_count_case_count_all_pass_flag_and_status
+  C: B_plus_cached_D_inputs_and_ordered_candidate_outputs_or_statuses
+  D: C_plus_validated_D_expected_outputs_and_actual_registered_comparator_results
+selection:
+  response_schema: '{"choice": 1..4}'
+  response_fields: [choice]
+  parser: strict_single_json_object_no_extra_fields
+  visible_pass_count: maximize_registered_V_case_passes
+  visible_consensus: maximize_identical_available_typed_V_signatures
+  d_only: maximize_comparator_valid_D_case_passes
+  v_plus_d: maximize_V_plus_D_case_passes
+  tie_break: lowest_original_E1_sample_index
+  freeze_before_correctness_label_join: true
+analysis:
+  bootstrap_replicates: 2000
+  bootstrap_seed: 11252026
+  unit: task
+  stratified_by_benchmark: true
+  exploratory_only: true
+caps:
+  tasks: 24
+  model_call_starts: 96
+  output_tokens: 12288
+  empirical_seconds: 1800
+  inference_streams: 1
+  minimum_free_disk_gib: 15
+  batch_tasks: 4
+resource_gate:
+  fresh_boot_required: true
+  requires_fresh_boot_after_utc: '2026-11-26T11:45:06Z'
+  requires_closure_of_unnecessary_apps: true
+  requires_no_stale_research_or_evaluator_processes: true
+  requires_docker_stopped_when_feasible: true
+  stop_on_critical_pressure: true
+  swap_growth_mib: 256
+  consecutive_high_swap_observations_to_stop: 2
+  repeat_rebaseline_to_bypass_stop: false
