@@ -158,19 +158,33 @@ def failure_counts(label, v, full):
     return result
 
 
-def analyze(run):
+def run_records(run):
+    """Read one run's evidence without joining records from another segment."""
+    run = Path(run)
     ledger = jsonl(run / "ledger.jsonl")
+    if not ledger or ledger[-1]["event"] not in ("global_freeze", "stopped"):
+        raise ValueError("analysis requires a terminal freeze or stopped-run record")
+    calls = [row for row in ledger if row["event"] == "call_complete"]
+    started = [row for row in ledger if row["event"] == "call_started"]
+    raw_files = {p.stem: p for p in run.glob("chunk-*/*.json") if len(p.stem) == 64}
+    try:
+        generations = [json.loads(raw_files[row["id"]].read_text()) for row in calls]
+    except (KeyError, json.JSONDecodeError, OSError) as error:
+        raise ValueError("a completed call lacks valid raw generation evidence") from error
+    return ledger, jsonl(run / "visible.jsonl"), jsonl(run / "decisions.jsonl"), \
+        jsonl(run / "sealed-labels.jsonl"), calls, started, generations
+
+
+def analyze_records(ledger, visible_records, decision_records, label_records, calls, started, generations):
     if not ledger or ledger[-1]["event"] not in ("global_freeze", "stopped"):
         raise ValueError("analysis requires a terminal freeze or stopped-run record")
     final = ledger[-1]
     checkpoints = [row for row in ledger if row["event"] == "chunk_checkpoint"]
     chunks = list(chunk_indices())
     usable = {i for row in checkpoints for i in chunks[row["chunk"]]}
-    calls = [row for row in ledger if row["event"] == "call_complete"]
-    started = [row for row in ledger if row["event"] == "call_started"]
-    vis = {(r["task"], r["sample"]): r["evidence"] for r in jsonl(run/"visible.jsonl") if r["task"] in usable}
-    signed = {(r["task"], r["sample"]): r for r in jsonl(run/"sealed-labels.jsonl") if r["task"] in usable}
-    decisions = {r["task"]: r["decisions"] for r in jsonl(run/"decisions.jsonl") if r["task"] in usable}
+    vis = {(r["task"], r["sample"]): r["evidence"] for r in visible_records if r["task"] in usable}
+    signed = {(r["task"], r["sample"]): r for r in label_records if r["task"] in usable}
+    decisions = {r["task"]: r["decisions"] for r in decision_records if r["task"] in usable}
     failures = sum((failure_counts(r, vis[key]["base"], r["outcomes"]["plus"]) for key, r in signed.items()), Counter())
     labels = {"official_compatible": {}, "integrity_qualified": {}}
     schedules = {}
@@ -196,8 +210,6 @@ def analyze(run):
                     **evidence_summary(rows, inds, resamples)}
             for scope, (inds, resamples) in scopes.items()
         }
-    raw_files = {p.stem: p for p in run.glob("chunk-*/*.json") if len(p.stem) == 64}
-    generations = [json.loads(raw_files[r["id"]].read_text()) for r in calls]
     code_groups = defaultdict(Counter)
     for r in calls:
         code_groups[r["task"]][r["code_hash"]] += 1
@@ -207,13 +219,15 @@ def analyze(run):
         "complete_checkpoint_tasks": len(usable),
         "generated_calls": len(calls),
         "started_calls": len(started),
+        "incomplete_started_calls": len(started) - len(calls),
         "output_tokens": sum(r["tokens"] for r in calls),
         "input_tokens": sum(r["input_tokens"] for r in calls),
         "wall_seconds": final["elapsed_seconds"],
+        "segment_wall_seconds": final.get("segment_elapsed_seconds", final["elapsed_seconds"]),
         "first_chunk_forecast_seconds": checkpoints[0]["forecast_seconds"] if checkpoints else None,
         "reference_precompute_seconds": checkpoints[0]["reference_audit_seconds"] if checkpoints else None,
         "memory_and_disk_samples": [row["environment"] for row in ledger
-                                    if row["event"] in ("start", "chunk_start", "chunk_checkpoint")],
+                                    if row["event"] in ("start", "continuation_start", "chunk_start", "chunk_checkpoint")],
         "generation_outcomes": dict(Counter(r["parse"] for r in calls)),
         "within_task_duplicate_extractions": sum(n-1 for group in code_groups.values() for n in group.values()),
         "med_prefill_tps": statistics.median(x["prefill_tokens_per_second"] for x in generations) if generations else None,
@@ -221,16 +235,31 @@ def analyze(run):
         "peak_mlx_bytes": max((x["peak_mlx_bytes"] for x in generations), default=None),
         "peak_rss_bytes": max((x["host_peak_rss_bytes"] for x in generations), default=None),
         "generation_seconds": sum(x["wall_seconds"] for x in generations),
+        "estimand_notes": {
+            "first": "observed correctness of candidate sample 0; distinct from unbiased pass@1",
+            "pass_at_k": "unbiased pass@k estimate under registered independent-sampling assumptions; requires all eight correctness labels",
+            "false_rejection": "structurally constrained because the full-suite endpoint contains the visible base tests",
+        },
         "failure_counts": dict(failures),
         "analyses": breakdown,
     }
 
 
+def analyze(run):
+    return analyze_records(*run_records(run))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("run", type=Path)
+    parser.add_argument("run", type=Path, nargs="+")
     args = parser.parse_args()
-    result = analyze(args.run)
+    if len(args.run) == 1:
+        result = analyze(args.run[0])
+    elif len(args.run) == 2:
+        from ciresearch.e1_combine import analyze_segments
+        result = analyze_segments(args.run)
+    else:
+        parser.error("provide either one run segment or the parent and continuation segments")
     # The input is private. Public publication uses reviewed aggregates only.
     print(json.dumps(result, indent=2))
 
