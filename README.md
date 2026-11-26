@@ -2,7 +2,7 @@
 
 This ongoing research program studies when additional inference helps short Python code generation and repair, and where the gains are lost. It uses local Apple Silicon, automated executable benchmarks and explicit boundaries between generation and evaluation. The work is exploratory and has not undergone peer review.
 
-**Current status:** P0 recovery passed and the eight-task P1 engineering smoke is complete. The six hypotheses remain untested. E1 awaits researcher authorization. [P1 review](reports/P1_SMOKE_V2.md) · [Evaluator and security evidence](reports/P0_RECOVERY_V2.md)
+**Current status:** E1 stopped at a registered resource gate after 20 of 40 development tasks. The partial exploratory results and limitations are available for review. [E1 review](reports/E1_REVIEW.md) · [Experiment record](docs/10_e1_experiment.md)
 
 ## Hypotheses
 

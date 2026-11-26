@@ -1,0 +1,18 @@
+{
+  "decision": "RESOURCE_STOPPED",
+  "registered_tasks": 40,
+  "completed_checkpoint_tasks": 20,
+  "benchmark_tasks_completed": {"humaneval": 10, "mbpp": 10},
+  "started_calls": 160,
+  "completed_calls": 160,
+  "input_tokens": 18904,
+  "output_tokens": 41376,
+  "wall_seconds": 1112.9658796659987,
+  "official_complete_pools": 19,
+  "integrity_qualified_complete_pools": 18,
+  "initial_swap_mib": 954.69,
+  "terminal_swap_mib": 1821.0,
+  "confirmation_access": 0,
+  "e2_e4_authorized": false,
+  "run_ledger_sha256": "1551ebdb68799051a77de97b23475d8db07071973160d75495ba9105f6648757"
+}
