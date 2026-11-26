@@ -1,0 +1,106 @@
+{
+  "schema": "ciresearch-e2-preinference-aggregate.v1",
+  "date": "2026-11-26",
+  "status": "technical_preflight_complete_execution_blocked_by_resource_gate",
+  "research_status": "exploratory; E1 incomplete; H1-H6 unresolved",
+  "e1_preservation": {
+    "checkpointed_tasks": 30,
+    "checkpointed_candidates": 240,
+    "generation_only_outputs": 13,
+    "interrupted_generations": 1,
+    "unstarted_candidate_identities": 66,
+    "resumed_or_regenerated": false
+  },
+  "e1_evidence_integrity": {
+    "historical_full_validator_record": "passed",
+    "current_parent_manifest_content_check": "passed",
+    "current_continuation_manifest_check": "passed",
+    "technical_projection_matches_prior_digest": true,
+    "current_full_pinned_parent_validation": "blocked_missing_local_environment_pin"
+  },
+  "technical_population": {
+    "completed_tasks": 30,
+    "eligible": {
+      "humaneval_plus": 13,
+      "mbpp_plus": 14
+    },
+    "technically_unavailable": 3,
+    "unavailable_reasons": {
+      "prompt_over_registered_input_limit": 2,
+      "incomplete_cached_d_panel": 1
+    },
+    "outcome_based_exclusions": 0,
+    "sampled": {
+      "humaneval_plus": 12,
+      "mbpp_plus": 12
+    },
+    "sample_membership_published": false
+  },
+  "prompt_forecast": {
+    "calls_scheduled": 96,
+    "conditions": {
+      "A": {"calls": 24, "input_tokens": 23304, "minimum": 424, "maximum": 1796},
+      "B": {"calls": 24, "input_tokens": 25554, "minimum": 516, "maximum": 1890},
+      "C": {"calls": 24, "input_tokens": 59381, "minimum": 1085, "maximum": 4986},
+      "D": {"calls": 24, "input_tokens": 73239, "minimum": 1484, "maximum": 6143}
+    },
+    "total_planned_input_tokens": 181478,
+    "input_limit": 8064,
+    "output_reserve": 128,
+    "all_prompts_recounted_with_pinned_tokenizer": true,
+    "prompt_truncations": 0
+  },
+  "actual_e2_activity": {
+    "model_call_starts": 0,
+    "model_input_tokens": 0,
+    "generated_tokens": 0,
+    "selector_responses": 0,
+    "invalid_responses": null,
+    "candidate_executions": 0,
+    "reference_recomputations": 0,
+    "e2_correctness_label_joins": 0,
+    "confirmation_accesses": 0,
+    "empirical_wall_seconds": 0,
+    "model_loaded": false
+  },
+  "model": {
+    "id": "mlx-community/Qwen2.5-Coder-3B-Instruct-4bit",
+    "revision": "3dd939c621c08e5753d5b89f35a2642cd83b98ca",
+    "sampling": {"temperature": 0.7, "top_p": 0.95, "max_new_tokens": 128},
+    "tokenizer_mode": "local_offline",
+    "runtime_package_versions_match_lock": true
+  },
+  "resource_gate": {
+    "boot_threshold_met": false,
+    "boot_time_cairo": "2026-11-25T13:43:08+02:00",
+    "required_boot_after_cairo": "2026-11-26T13:45:06+02:00",
+    "snapshot_time_cairo": "2026-11-26T22:23:28+02:00",
+    "physical_memory_gib": 16,
+    "estimated_available_memory_gib": 3.72,
+    "memory_pressure_level": 1,
+    "swap_used_mib": 1996.62,
+    "free_disk_gib": 95.7,
+    "foreground_application_count": 9,
+    "ollama_process_count": 1,
+    "docker_desktop_running": true,
+    "docker_vm_memory_gib": 11.67,
+    "running_container_count": 0,
+    "inference_started": false,
+    "resource_stop_explanation_established": false
+  },
+  "security_probe": {
+    "registered_protected_roots": 4,
+    "protected_read_canaries_denied": 4,
+    "loopback_network_denied": true,
+    "model_worker_started": false,
+    "candidate_code_executed": false
+  },
+  "public_pins": {
+    "protocol_v1_sha256": "7b1cede935d27c5eec6cf93fd8b7a67bff117cbf28ec6db6decb709184458021",
+    "technical_amendment_v2_sha256": "cdb54da4c90eb6c79c70eac6caf6734594a69149d2a13c8a3bac750bfb3c453a",
+    "technical_amendment_v3_sha256": "aad45916500414db65fa050f4211465efefe5dad92293f79b2d706938b996c88",
+    "information_boundary_amendment_v4_sha256": "8e0d936c1f558352904c2329b0b4688b039f4f73521f607432b0318fcb37a8a9",
+    "e2_config_v4_sha256": "1cbe5b51e76e77b8c7fa3e3d600f0d475f82a92e37af1d874bd2b710976e5440",
+    "inference_dependency_lock_sha256": "0cce4c3b86cafcf7c3369f423f54af27dde21a0e2e8b167bcb7d49d62c7fee54"
+  }
+}
